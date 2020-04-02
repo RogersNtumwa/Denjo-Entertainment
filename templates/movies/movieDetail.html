@@ -1,0 +1,86 @@
+{%extends 'base.html' %} {%block content%}
+<h2>MOVIE DETAILS</h2>
+<div class="movie-details">
+  <div class="row" style="margin-top: 30px; ">
+    <div class="col-md-3">
+      <h3>TITLE : {{ clip.title }}</h3>
+      <p><b>GENRE :</b> {{ clip.genre }}</p>
+      <p><b>Detailes:</b> {{ clip.description|truncatewords:50 }}</p>
+    </div>
+    <div class="col-md-9">
+      <div class="embed-responsive embed-responsive-16by9">
+        <video autoplay class="embed-responsive-item" controls>
+          <source src="{{ clip.moviefile.url }}" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-md-12">
+      <h3>MORE RELATED MOVIES</h3>
+    </div>
+  </div>
+  <section class="movies">
+    {% if similar_movies%}
+    <!-- looping over the similar movies -->
+    {% for item in similar_movies %}
+    <div class="movie">
+      <a class="movie__card-img" href="{% url 'movie_details' item.slug%}"
+        ><img src="{{ item.logo.url }}" alt="" style="width: 100%;"
+      /></a>
+      <h4 class="movie__card-title">{{ item.title }}</h4>
+      <p class="movie__card-year">{{ item.year_published }}</p>
+    </div>
+    {%endfor%}{%else%}
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h2>Sorry There are no similar movies</h2>
+      </div>
+    </div>
+    {%endif%}
+  </section>
+  <div class="row">
+    <div class="col-md-12">
+      {%if similar_movies.has_other_pages %}
+      <ul class="pagination">
+        {%if similar_movies.has_previous%}
+        <li class="page-item">
+          <a
+            class="page-link"
+            href="?page={{similar_movies.previous_page_number}}"
+            >&laquo;</a
+          >
+        </li>
+        {%else%}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">&laquo;</a>
+        </li>
+        {%endif%} {% for i in similar_movies.paginator.page_range%}
+        <!-- if statement -->
+        {% if similar_movies.number == i%}
+        <li class="page-item active">
+          <a class="page-link">{{i}}</a>
+        </li>
+        {%else%}
+        <li class="page-item">
+          <a href="?page={{i}}" class="page-link">{{i}}</a>
+        </li>
+        {%endif%} {%endfor%} {%if similar_movies.has_next%}
+        <li class="page-item">
+          <a class="page-link" href="?page={{similar_movies.next_page_number}}"
+            >&raquo;</a
+          >
+        </li>
+        {%else%}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">&raquo;</a>
+        </li>
+        {%endif%}
+      </ul>
+      {%endif%}
+    </div>
+  </div>
+</div>
+
+{%endblock%}
